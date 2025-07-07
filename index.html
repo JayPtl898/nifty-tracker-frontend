@@ -146,7 +146,7 @@
 
     async function fetchLTPs() {
       try {
-        const response = await fetch('https://nifty-tracker-backend.onrender.com/nifty');
+        const response = await fetch('http://localhost:5000/nifty');
         const data = await response.json();
 
         for (const option of data) {
