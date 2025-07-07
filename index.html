@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NIFTY Strategy Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 10px;
+    }
+    h2 {
+      margin-top: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 12px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      text-align: center;
+      padding: 6px;
+    }
+    input[type="number"] {
+      width: 50px;
+    }
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .input-row input {
+      padding: 4px;
+      width: 80px;
+    }
+    button {
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>NIFTY Options Strategy Tracker</h1>
+
+  <div class="input-row">
+    <label>ATM: <input type="number" id="atm" value="23700" /></label>
+    <label>Step: <input type="number" id="step" value="50" /></label>
+    <label>Buy Qty: <input type="number" id="buyQty" value="1" /></label>
+    <label>Sell Qty: <input type="number" id="sellQty" value="3" /></label>
+    <button onclick="updateTables()">Update</button>
+  </div>
+
+  <h2>CE Options</h2>
+  <table id="ceTable">
+    <thead>
+      <tr>
+        <th>Strike</th>
+        <th>LTP</th>
+        <th>Payoff</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>PE Options</h2>
+  <table id="peTable">
+    <thead>
+      <tr>
+        <th>Strike</th>
+        <th>LTP</th>
+        <th>Payoff</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    function updateTables() {
+      const atm = parseInt(document.getElementById("atm").value);
+      const step = parseInt(document.getElementById("step").value);
+      const buy = parseInt(document.getElementById("buyQty").value);
+      const sell = parseInt(document.getElementById("sellQty").value);
+
+      populateTable("ceTable", atm - 2 * step, step, "CE", buy, sell);
+      populateTable("peTable", atm + 2 * step, -step, "PE", buy, sell);
+    }
+
+    function populateTable(tableId, startStrike, step, type, buy, sell) {
+      const tableBody = document.getElementById(tableId).querySelector("tbody");
+      tableBody.innerHTML = "";
+
+      for (let i = 0; i < 10; i++) {
+        const strike = startStrike + i * step;
+        const row = document.createElement("tr");
+
+        const strikeCell = document.createElement("td");
+        strikeCell.textContent = `${strike}${type}`;
+        row.appendChild(strikeCell);
+
+        const ltpCell = document.createElement("td");
+        ltpCell.textContent = "Fetching...";
+        ltpCell.id = `ltp-${strike}${type}`;
+        row.appendChild(ltpCell);
+
+        const payoffCell = document.createElement("td");
+        payoffCell.textContent = "-";
+        payoffCell.id = `payoff-${strike}${type}`;
+        row.appendChild(payoffCell);
+
+        tableBody.appendChild(row);
+      }
+    }
+
+    updateTables();
+  </script>
+</body>
+</html>
